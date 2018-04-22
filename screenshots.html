@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Screenshots WebRTC</title>
+</head>
+<body>
+    <video autoplay></video>
+    <img src="">
+    <canvas style="display:none;"></canvas>
+
+    <div style="text-align:center;">
+        <video id="screenshot-video" class="videostream" autoplay></video>
+        <img id="screenshot-img" src="">
+        <p><button id="screenshot-button">Take screenshot</button></p>
+    </div>
+
+    <script>
+        function hasGetUserMedia() {
+            return (navigator.mediaDevices && navigator.mediaDevices.getUserMedia);
+        }
+
+        if (!hasGetUserMedia()) {
+            alert('getUserMedia() is not supported by your browser');
+        } else {
+            const constraints = { video: true, width: 640, height: 480 };
+            const button = document.querySelector('#screenshot-button');
+            const img = document.querySelector('#screenshot-img');
+            const video = document.querySelector('#screenshot-video');
+            const canvas = document.createElement('canvas');
+
+            button.onclick = video.onclick = function () {
+                canvas.width = video.videoWidth;
+                canvas.height = video.videoHeight;
+                canvas.getContext('2d').drawImage(video, 0, 0);
+                // Other browsers will fall back to image/webp
+                img.src = canvas.toDataURL('image/webp');
+            };
+
+            function handleSuccess(stream) {
+                video.srcObject = stream;
+            }
+
+            function handleError(error) {
+                alert("Rejected! " + error);
+            }
+
+            navigator.mediaDevices.getUserMedia(constraints).then(handleSuccess).catch(handleError);
+        }
+    </script>
+
+</body>
+</html>
