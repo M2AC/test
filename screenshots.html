@@ -3,15 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <title>Screenshots WebRTC</title>
+<script>
+    var data = '';
+
+    function allowDrop(ev) {
+        ev.preventDefault();
+    }
+
+    function drag(ev) {
+        ev.dataTransfer.setData("text", ev.target.id);
+    }
+
+    function drop(ev) {
+        ev.preventDefault();
+        data = ev.dataTransfer.getData("text");
+        ev.target.appendChild(document.getElementById(data));
+    }
+</script>
 </head>
 <body>
-    <video autoplay></video>
-    <img src="">
-    <canvas style="display:none;"></canvas>
-
     <div style="text-align:center;">
         <video id="screenshot-video" class="videostream" autoplay></video>
-        <img id="screenshot-img" src="">
+        <img id="screenshot-img" src="" draggable="true" ondragstart="drag(event)">
+        <div id="div-where-to-drop" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
         <p><button id="screenshot-button">Take screenshot</button></p>
     </div>
 
@@ -32,9 +46,8 @@
             button.onclick = video.onclick = function () {
                 canvas.width = video.videoWidth;
                 canvas.height = video.videoHeight;
-                canvas.getContext('2d').drawImage(video, 0, 0);
-                // Other browsers will fall back to image/webp
-                img.src = canvas.toDataURL('image/webp');
+                canvas.getContext('2d').drawImage(video, 0, 0, 142, 198);
+                img.src = canvas.toDataURL('image/*');
             };
 
             function handleSuccess(stream) {
